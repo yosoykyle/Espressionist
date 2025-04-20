@@ -1,0 +1,43 @@
+<!-- Navbar Component for Espressionist Website -->
+<div class="logo">
+    <a href="index.html">espressionist</a>
+</div>
+<nav class="nav">
+    <ul>
+        <li><a href="products.html" id="nav-shop">Shop</a></li>
+        <li><a href="cart.html" id="nav-cart">Cart</a></li>
+        <li><a href="track.html" id="nav-track">Track Order</a></li>
+        <li><a href="index.html#about" id="nav-about">About</a></li>
+    </ul>
+</nav>
+
+<script>
+    // Set active class based on current page
+    (function() {
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        // Clear any existing active classes
+        document.querySelectorAll('.nav a').forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        // Set active class based on current page
+        switch(currentPage) {
+            case 'products.html':
+                document.getElementById('nav-shop').classList.add('active');
+                break;
+            case 'cart.html':
+                document.getElementById('nav-cart').classList.add('active');
+                break;
+            case 'track.html':
+                document.getElementById('nav-track').classList.add('active');
+                break;
+            case 'index.html':
+                // Only set About as active if the hash is #about
+                if(window.location.hash === '#about') {
+                    document.getElementById('nav-about').classList.add('active');
+                }
+                break;
+        }
+    })();
+</script>

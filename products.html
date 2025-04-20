@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop | Espressionist</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Component loader script -->
+    <script src="js/components.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container" data-component="navbar">
+            <!-- Navbar will be loaded here -->
+        </div>
+    </header>
+
+    <!-- Category Tabs -->
+    <section class="category-tabs">
+        <div class="container">
+            <div class="tabs-container">
+                <button class="tab-btn">Coffee & Tea</button>
+                <button class="tab-btn">Art & Merch</button>
+                <button class="tab-btn">Gift Sets</button>
+                <button class="tab-btn">Digital Vouchers</button>
+                <button class="tab-btn" onclick="window.location.href='index.html#about'">Book a Spot</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Grid -->
+    <section class="products">
+        <div class="container">
+            <!-- Empty State Message (visible by default) -->
+            <div class="empty-state">
+                <p>No products to show yet. Please check back soon.</p>
+            </div>
+
+            <!-- Product Grid (hidden by default, would be shown when products are available) -->
+            <div class="product-grid" style="display: none;">
+                <!-- Product Card Template (repeated for demonstration) -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <!-- Placeholder for product image -->
+                        <div class="image-placeholder"></div>
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-name">Product Name</h3>
+                        <p class="product-price">₱—</p>
+                        <button class="add-to-cart-btn">Add to Cart</button>
+                    </div>
+                </div>
+                
+                <!-- More product cards would be added here dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container" data-component="footer">
+            <!-- Footer will be loaded here -->
+        </div>
+    </footer>
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/products.js"></script>
+</body>
+</html>

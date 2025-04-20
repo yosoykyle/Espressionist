@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart | Espressionist</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/cart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Component loader script -->
+    <script src="js/components.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container" data-component="navbar">
+            <!-- Navbar will be loaded here -->
+        </div>
+    </header>
+
+    <!-- Cart Section -->
+    <section class="cart-section">
+        <div class="container">
+            <h1 class="page-title">Your Cart</h1>
+            
+            <div class="cart-container">
+                <!-- Empty Cart Message (will be shown/hidden by JavaScript) -->
+                <div class="empty-cart" id="empty-cart">
+                    <p>Your cart is empty.</p>
+                    <a href="products.html" class="btn-continue-shopping">Continue Shopping</a>
+                </div>
+                
+                <!-- Cart Items Table (will be shown/hidden by JavaScript) -->
+                <div class="cart-items-container" id="cart-items-container">
+                    <div class="cart-table">
+                        <div class="cart-header">
+                            <div class="cart-cell header-cell">Product</div>
+                            <div class="cart-cell header-cell">Quantity</div>
+                            <div class="cart-cell header-cell">Price</div>
+                            <div class="cart-cell header-cell">Total</div>
+                            <div class="cart-cell header-cell">Action</div>
+                        </div>
+                        
+                        <!-- Cart items will be inserted here by JavaScript -->
+                        <div id="cart-items"></div>
+                    </div>
+                    
+                    <!-- Cart Summary -->
+                    <div class="cart-summary">
+                        <h2>Cart Summary</h2>
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span class="cart-subtotal" id="cart-subtotal">₱0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax (12% VAT):</span>
+                            <span class="cart-tax" id="cart-tax">₱0.00</span>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span>Total:</span>
+                            <span class="cart-total" id="cart-total">₱0.00</span>
+                        </div>
+                        <p class="vat-disclaimer">*Prices are inclusive of 12% VAT</p>
+                        
+                        <div class="checkout-actions">
+                            <a href="products.html" class="btn-secondary">Continue Shopping</a>
+                            <a href="checkout.html" class="btn-checkout">Proceed to Checkout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container" data-component="footer">
+            <!-- Footer will be loaded here -->
+        </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/cart.js"></script>
+</body>
+</html>

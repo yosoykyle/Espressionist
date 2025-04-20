@@ -1,0 +1,107 @@
+/* Success Page Specific Styles */
+/* Existing styles remain unchanged */
+
+/* Enhanced Responsive Styles for Success Page */
+@media (max-width: 768px) {
+  .success-container,
+  .fallback-container {
+    padding: 30px 20px;
+  }
+
+  .success-title,
+  .fallback-title {
+    font-size: 1.8rem;
+  }
+
+  .tracking-code {
+    font-size: 1.5rem;
+    padding: 8px 15px;
+  }
+
+  .success-actions {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .btn-track,
+  .btn-shop {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .success-icon,
+  .fallback-icon {
+    font-size: 4rem;
+  }
+
+  .success-title,
+  .fallback-title {
+    font-size: 1.5rem;
+  }
+
+  .tracking-code {
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+  }
+
+  .summary-item {
+    padding: 10px;
+  }
+
+  /* Improve spacing on small screens */
+  .success-section {
+    padding: 40px 0 60px;
+  }
+
+  .order-details {
+    margin: 20px 0;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .success-section {
+    padding: 20px 0 40px;
+    min-height: auto;
+  }
+
+  .success-container,
+  .fallback-container {
+    padding: 20px 15px;
+  }
+
+  .success-icon,
+  .fallback-icon {
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+  }
+
+  .success-title,
+  .fallback-title {
+    margin-bottom: 15px;
+  }
+
+  .order-details {
+    margin: 15px 0;
+  }
+
+  .success-actions {
+    margin-top: 20px;
+  }
+}
+
+/* Larger screens */
+@media (min-width: 1200px) {
+  .success-container,
+  .fallback-container {
+    max-width: 800px;
+    padding: 50px;
+    border-radius: 15px;
+  }
+
+  .tracking-code {
+    font-size: 2.2rem;
+    padding: 12px 25px;
+  }
+}
