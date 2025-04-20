@@ -35,11 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
   setupTrackingCodeValidation()
 })
 
-/**
- * Set up real-time validation for tracking code input
- */
+// Update the setupTrackingCodeValidation function for better real-time validation
 function setupTrackingCodeValidation() {
   const trackingCodeInput = document.getElementById("tracking-code")
+  const trackForm = document.querySelector(".tracking-form")
 
   if (trackingCodeInput) {
     // Validate on input (as user types)
@@ -52,13 +51,41 @@ function setupTrackingCodeValidation() {
       validateTrackingCode(trackingCodeInput.value.trim())
     })
   }
+
+  // Prevent form submission if validation fails
+  if (trackForm) {
+    trackForm.addEventListener("submit", (event) => {
+      event.preventDefault()
+
+      const trackingCode = trackingCodeInput.value.trim()
+      const isValid = validateTrackingCode(trackingCode)
+
+      if (isValid) {
+        trackOrder()
+      } else {
+        // Focus the tracking code input
+        trackingCodeInput.focus()
+      }
+    })
+  }
+
+  // Add event listener for track button
+  document.getElementById("track-btn").addEventListener("click", (event) => {
+    event.preventDefault()
+
+    const trackingCode = trackingCodeInput.value.trim()
+    const isValid = validateTrackingCode(trackingCode)
+
+    if (isValid) {
+      trackOrder()
+    } else {
+      // Focus the tracking code input
+      trackingCodeInput.focus()
+    }
+  })
 }
 
-/**
- * Validate tracking code
- * @param {string} code - The tracking code to validate
- * @returns {boolean} - Whether the tracking code is valid
- */
+// Update the validateTrackingCode function to return validation result
 function validateTrackingCode(code) {
   // Hide any existing error messages
   document.getElementById("error-message").style.display = "none"
@@ -70,31 +97,33 @@ function validateTrackingCode(code) {
   if (!code) {
     // If empty, reset to default message
     trackingInfoElement.textContent = "Enter your order tracking code below to check the status of your order."
-    trackingInfoElement.classList.remove("error")
+    trackingInfoElement.classList.remove("error", "success")
     trackingCodeInput.setAttribute("aria-invalid", "false")
+    trackingCodeInput.classList.remove("invalid-input")
     return false
   }
 
   // Basic format validation (can be customized based on your tracking code format)
   // For example, if your tracking codes always start with ESPR-
-  if (code.startsWith("ESPR-")) {
+  if (code.startsWith("ESPR-") && code.length >= 11) {
+    // ESPR- plus at least 6 characters
     trackingInfoElement.textContent = "Valid tracking code format."
     trackingInfoElement.classList.remove("error")
     trackingInfoElement.classList.add("success")
     trackingCodeInput.setAttribute("aria-invalid", "false")
+    trackingCodeInput.classList.remove("invalid-input")
     return true
   } else {
-    trackingInfoElement.textContent = "Tracking codes typically start with ESPR-"
+    trackingInfoElement.textContent = "Tracking codes should start with ESPR- followed by 6 characters."
     trackingInfoElement.classList.add("error")
     trackingInfoElement.classList.remove("success")
     trackingCodeInput.setAttribute("aria-invalid", "true")
+    trackingCodeInput.classList.add("invalid-input")
     return false
   }
 }
 
-/**
- * Track order based on tracking code input
- */
+// Update the trackOrder function to use validation
 function trackOrder() {
   // Hide previous results and error messages
   document.getElementById("order-results").style.display = "none"
@@ -104,8 +133,8 @@ function trackOrder() {
   const trackingCode = document.getElementById("tracking-code").value.trim()
 
   // Validate tracking code
-  if (!trackingCode) {
-    showTrackError("Please enter a tracking code")
+  if (!validateTrackingCode(trackingCode)) {
+    showTrackError("Please enter a valid tracking code")
 
     // Focus the input field for better UX
     document.getElementById("tracking-code").focus()

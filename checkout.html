@@ -10,48 +10,51 @@
     <!-- Component loader script -->
     <script src="js/components.js"></script>
     <style>
-        /* Additional styles for form validation */
-        .error-message {
-            color: #d32f2f;
-            font-size: 0.85rem;
-            margin-top: 5px;
-            display: none;
-            transition: all 0.3s ease;
-        }
-        
-        .error-message.visible {
-            display: block;
-        }
-        
-        input[aria-invalid="true"], 
-        textarea[aria-invalid="true"] {
-            border-color: #d32f2f;
-            background-color: #fff8f8;
-        }
-        
-        .form-group {
-            margin-bottom: 25px; /* Increased to accommodate error messages */
-        }
-        
-        /* Success message styling */
-        .tracking-info.success {
-            color: #388e3c;
-        }
-        
-        .tracking-info.error {
-            color: #d32f2f;
-        }
-        
-        /* Order success message animation */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translate(-50%, -60%); }
-            to { opacity: 1; transform: translate(-50%, -50%); }
-        }
-        
-        .order-success-message {
-            animation: fadeIn 0.3s ease forwards;
-        }
-    </style>
+    /* Form validation styles */
+    .error-message {
+        color: #d32f2f;
+        font-size: 0.85rem;
+        margin-top: 5px;
+        display: none;
+        transition: all 0.3s ease;
+    }
+    
+    .error-message.visible {
+        display: block;
+    }
+    
+    input[aria-invalid="true"], 
+    textarea[aria-invalid="true"],
+    .invalid-input {
+        border-color: #d32f2f !important;
+        background-color: #fff8f8;
+        box-shadow: 0 0 0 1px #d32f2f;
+    }
+    
+    .form-group {
+        margin-bottom: 25px; /* Increased to accommodate error messages */
+        position: relative;
+    }
+    
+    /* Success message styling */
+    .tracking-info.success {
+        color: #388e3c;
+    }
+    
+    .tracking-info.error {
+        color: #d32f2f;
+    }
+    
+    /* Order success message animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translate(-50%, -60%); }
+        to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+    
+    .order-success-message {
+        animation: fadeIn 0.3s ease forwards;
+    }
+</style>
 </head>
 <body>
     <!-- Header -->
@@ -168,7 +171,7 @@
             
             <!-- Place Order Button -->
             <div class="place-order-container">
-                <button type="button" id="place-order-btn" class="place-order-btn">Place Order</button>
+                <button type="submit" id="place-order-btn" class="place-order-btn" form="shipping-form">Place Order</button>
             </div>
         </div>
     </section>

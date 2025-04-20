@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadOrderSummary()
 
   // Add event listener for place order button
-  document.getElementById("place-order-btn").addEventListener("click", handlePlaceOrder)
+  //document.getElementById("place-order-btn").addEventListener("click", handlePlaceOrder)
 
   // Set up real-time validation for form fields
   setupFormValidation()
@@ -71,14 +71,14 @@ function updateOrderTotals(cartItems) {
   document.getElementById("order-total").textContent = formatCurrency(total)
 }
 
-/**
- * Set up real-time validation for form fields
- */
+// In the setupFormValidation function, update to handle real-time validation better
+
 function setupFormValidation() {
   // Get form elements
   const fullNameInput = document.getElementById("fullName")
   const phoneNumberInput = document.getElementById("phoneNumber")
   const addressInput = document.getElementById("address")
+  const shippingForm = document.getElementById("shipping-form")
 
   // Add input event listeners for real-time validation
   if (fullNameInput) {
@@ -111,14 +111,32 @@ function setupFormValidation() {
       validateField(addressInput, "address-error", validateAddress)
     })
   }
+
+  // Prevent form submission if validation fails
+  if (shippingForm) {
+    shippingForm.addEventListener("submit", (event) => {
+      event.preventDefault()
+
+      // Validate all fields
+      const isFullNameValid = validateField(fullNameInput, "fullName-error", validateFullName)
+      const isPhoneNumberValid = validateField(phoneNumberInput, "phoneNumber-error", validatePhoneNumber)
+      const isAddressValid = validateField(addressInput, "address-error", validateAddress)
+
+      // Only proceed if all fields are valid
+      if (isFullNameValid && isPhoneNumberValid && isAddressValid) {
+        // Form is valid, proceed with submission
+        handlePlaceOrder()
+      } else {
+        // Focus the first invalid field
+        if (!isFullNameValid) fullNameInput.focus()
+        else if (!isPhoneNumberValid) phoneNumberInput.focus()
+        else if (!isAddressValid) addressInput.focus()
+      }
+    })
+  }
 }
 
-/**
- * Validate a specific field using the provided validation function
- * @param {HTMLElement} inputElement - The input element to validate
- * @param {string} errorElementId - The ID of the error message element
- * @param {Function} validationFunction - The function to use for validation
- */
+// Update the validateField function to return validation result
 function validateField(inputElement, errorElementId, validationFunction) {
   const value = inputElement.value.trim()
   const result = validationFunction(value)
@@ -126,9 +144,11 @@ function validateField(inputElement, errorElementId, validationFunction) {
   if (!result.isValid) {
     showError(errorElementId, result.message)
     inputElement.setAttribute("aria-invalid", "true")
+    inputElement.classList.add("invalid-input")
   } else {
     clearError(errorElementId)
     inputElement.removeAttribute("aria-invalid")
+    inputElement.classList.remove("invalid-input")
   }
 
   return result.isValid
@@ -313,20 +333,20 @@ function calculateCartTotals(cartItems) {
   return { subtotal, tax, total }
 }
 
-/**
- * Handle place order button click
- */
+// Update the handlePlaceOrder function to use the form's submit event
 function handlePlaceOrder() {
-  // Validate shipping form
-  const { isValid, shippingData } = validateShippingForm()
+  // Get shipping data from form
+  const fullName = document.getElementById("fullName").value.trim()
+  const phoneNumber = document.getElementById("phoneNumber").value.trim()
+  const address = document.getElementById("address").value.trim()
+  const notes = document.getElementById("notes").value.trim()
 
-  if (!isValid) {
-    // Scroll to the first error
-    const firstError = document.querySelector(".error-message.visible")
-    if (firstError) {
-      firstError.scrollIntoView({ behavior: "smooth", block: "center" })
-    }
-    return
+  // Create shipping data object
+  const shippingData = {
+    name: fullName,
+    phone: phoneNumber,
+    address: address,
+    note: notes,
   }
 
   // Get cart items
