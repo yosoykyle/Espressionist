@@ -65,7 +65,7 @@ function loadInlineComponents() {
 
     // Set active class based on current page
     setTimeout(() => {
-      const currentPage = window.location.pathname.split("/").pop() || "index.html"
+      const currentPage = window.location.pathname.split("/").pop()
 
       // Clear any existing active classes
       document.querySelectorAll(".nav a").forEach((link) => {
@@ -78,8 +78,6 @@ function loadInlineComponents() {
           document.getElementById("nav-shop")?.classList.add("active")
           break
         case "cart.html":
-        case "checkout.html":
-        case "success.html":
           document.getElementById("nav-cart")?.classList.add("active")
           break
         case "track.html":
