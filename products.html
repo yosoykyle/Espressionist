@@ -10,6 +10,9 @@
     <script src="js/components.js"></script>
 </head>
 <body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <!-- Header -->
     <header class="header">
         <div class="container" data-component="navbar">
@@ -21,35 +24,48 @@
     <section class="category-tabs">
         <div class="container">
             <div class="tabs-container">
-                <button class="tab-btn">Coffee & Tea</button>
-                <button class="tab-btn">Art & Merch</button>
-                <button class="tab-btn">Gift Sets</button>
-                <button class="tab-btn">Digital Vouchers</button>
-                <button class="tab-btn" onclick="window.location.href='index.html#about'">Book a Spot</button>
+                <button class="tab-btn" aria-pressed="false">Coffee & Tea</button>
+                <button class="tab-btn" aria-pressed="false">Art & Merch</button>
+                <button class="tab-btn" aria-pressed="false">Gift Sets</button>
+                <button class="tab-btn" aria-pressed="false">Digital Vouchers</button>
+                <button class="tab-btn" aria-pressed="false" onclick="window.location.href='index.html#about'">Book a Spot</button>
             </div>
         </div>
     </section>
 
     <!-- Product Grid -->
-    <section class="products">
+    <section class="products" id="main-content">
         <div class="container">
             <!-- Empty State Message (visible by default) -->
-            <div class="empty-state">
-                <p>No products to show yet. Please check back soon.</p>
+            <div class="empty-state" id="empty-products">
+                <div class="empty-state-icon">
+                    <i class="fas fa-mug-hot"></i>
+                </div>
+                <h2 class="empty-state-title">No products available yet</h2>
+                <p class="empty-state-message">We're working on adding our amazing products to our online store. Please check back soon or visit our physical store to see our full collection.</p>
+                <div class="empty-state-action">
+                    <a href="index.html#about" class="btn btn-primary">Visit Our Café</a>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="products-loading" class="loading-container" style="display: none;">
+                <div class="loading-spinner"></div>
+                <span class="loading-text">Loading products...</span>
             </div>
 
             <!-- Product Grid (hidden by default, would be shown when products are available) -->
-            <div class="product-grid" style="display: none;">
+            <div class="product-grid" id="product-grid" style="display: none;">
                 <!-- Product Card Template (repeated for demonstration) -->
                 <div class="product-card">
                     <div class="product-image">
                         <!-- Placeholder for product image -->
-                        <div class="image-placeholder"></div>
+                        <div class="image-placeholder" aria-label="Product image placeholder"></div>
                     </div>
                     <div class="product-details">
                         <h3 class="product-name">Product Name</h3>
                         <p class="product-price">₱—</p>
-                        <button class="add-to-cart-btn">Add to Cart</button>
+                        <button class="add-to-cart-btn" aria-label="Add Product Name to cart">Add to Cart</button>
                     </div>
                 </div>
                 
