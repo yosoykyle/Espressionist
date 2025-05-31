@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin: Order Management | Espressionist</title>
+    <link rel="stylesheet" href="css/admin-styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="products.html">Product Management</a></li>
+            <li><a href="orders.html">Order Management</a></li>
+            <li><a href="users.html">User Management</a></li>
+            <li><a href="#" id="logout-link-order">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Order Management</h1>
+
+        <div id="order-list-container">
+            <h2>Order List</h2>
+            <p id="order-list-feedback">Loading orders...</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer Name</th>
+                        <th>Order Date</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="order-table-body">
+                    <!-- Example Row (to be replaced or cleared by JS) -->
+                    <tr><td colspan="6">No orders loaded yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal or inline form for status update - conceptual for stub -->
+        <div id="update-status-container" style="margin-top: 20px; padding:15px; border:1px solid #eee; display:none;">
+            <h3>Update Order Status</h3>
+            <p>Order ID: <span id="modal-order-id"></span></p>
+            <div class="form-group">
+                <label for="new-status">New Status:</label>
+                <select id="new-status" name="new-status">
+                    <option value="Pending">Pending</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <button id="submit-status-update" class="btn-admin">Update Status</button>
+            <p id="status-update-feedback" style="margin-top:10px;"></p>
+        </div>
+
+    </div>
+    <script src="js/orders-admin.js"></script>
+    <script>
+       // Basic logout link functionality for stub pages
+       const logoutLinkOrder = document.getElementById('logout-link-order');
+       if(logoutLinkOrder) {
+           logoutLinkOrder.addEventListener('click', (e) => {
+               e.preventDefault();
+               alert('Mock logout clicked. Redirecting to login.html (stub behavior)');
+               window.location.href = 'login.html';
+           });
+       }
+    </script>
+</body>
+</html>
