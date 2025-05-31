@@ -1,41 +1,81 @@
 // Products page functionality for Espressionist e-commerce site
 
-let allFetchedProducts = []; // To store all products fetched from JSON
+let allFetchedProducts = []; // To store all products fetched from JSON or API
 
 document.addEventListener("DOMContentLoaded", () => {
     setupCategoryTabs();
     fetchProducts(); // Initial fetch and render of all products
-    // setupAddToCartButtons() will be called by renderProducts after products are on the page
 });
 
 /**
- * Fetches products from the mock JSON file.
+ * Fetches products first from /api/products, then falls back to local mock JSON.
  */
 async function fetchProducts() {
     const productGrid = document.getElementById("product-grid");
     const emptyProductsDiv = document.getElementById("empty-products");
     const loadingIndicator = document.getElementById("products-loading");
+    const loadingText = loadingIndicator ? loadingIndicator.querySelector('.loading-text') : null;
 
-    if (loadingIndicator) loadingIndicator.style.display = "flex"; // Use flex as per its CSS
-    if (productGrid) productGrid.style.display = "none";
-    if (emptyProductsDiv) emptyProductsDiv.style.display = "none";
+    function showLoading(message) {
+        if (loadingIndicator) loadingIndicator.style.display = "flex";
+        if (loadingText) loadingText.textContent = message || "Loading products...";
+        if (productGrid) productGrid.style.display = "none";
+        if (emptyProductsDiv) emptyProductsDiv.style.display = "none";
+    }
 
-    try {
-        const response = await fetch('data/mock-products.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        allFetchedProducts = await response.json();
-        renderProducts(allFetchedProducts); // Render all products initially
-    } catch (error) {
-        console.error("Error fetching products:", error);
+    function hideLoading() {
+        if (loadingIndicator) loadingIndicator.style.display = "none";
+    }
+
+    function showError(message) {
         if (emptyProductsDiv) {
-            emptyProductsDiv.innerHTML = `<p>Could not load products. Please try again later.</p>`;
+            emptyProductsDiv.innerHTML = `<p>${message}</p>`;
             emptyProductsDiv.style.display = "flex";
         }
         if (productGrid) productGrid.style.display = "none";
-    } finally {
-        if (loadingIndicator) loadingIndicator.style.display = "none";
+        hideLoading();
+    }
+
+    showLoading("Attempting to fetch products from API...");
+
+    try {
+        const response = await fetch('/api/products');
+        if (!response.ok) {
+            // Not a network error, but an HTTP error (4xx, 5xx)
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+        const dataFromApi = await response.json();
+        if (!Array.isArray(dataFromApi)) {
+            // Valid JSON, but not an array as expected
+            throw new Error("API did not return a valid product list.");
+        }
+        allFetchedProducts = dataFromApi;
+        console.log("Successfully fetched products from /api/products");
+        renderProducts(allFetchedProducts);
+        hideLoading();
+    } catch (error) {
+        console.warn("API call to /api/products failed:", error.message);
+        showLoading("API failed. Attempting to load from local backup...");
+
+        try {
+            const fallbackResponse = await fetch('data/mock-products.json');
+            if (!fallbackResponse.ok) {
+                throw new Error(`HTTP error! status: ${fallbackResponse.status} while fetching local JSON.`);
+            }
+            allFetchedProducts = await fallbackResponse.json();
+            if (!Array.isArray(allFetchedProducts)) {
+                 throw new Error("Local mock data is not a valid product list.");
+            }
+            console.log("Successfully fetched products from local data/mock-products.json");
+            renderProducts(allFetchedProducts);
+            // Optionally, inform user that fallback data is shown
+            if (loadingText) loadingText.textContent = "Displaying products from local backup.";
+            // Keep loading indicator for a bit or remove immediately
+             setTimeout(hideLoading, 500); // Hide after a short delay to show message
+        } catch (fallbackError) {
+            console.error("Error fetching products from local backup:", fallbackError.message);
+            showError("Could not load products from API or local backup. Please try again later.");
+        }
     }
 }
 
@@ -57,19 +97,23 @@ function renderProducts(productsToRender, categoryFilter = 'all') {
 
     const filteredProducts = categoryFilter === 'all'
         ? productsToRender
-        : productsToRender.filter(product => product.category.toLowerCase() === categoryFilter.toLowerCase());
+        : productsToRender.filter(product => product.category && product.category.toLowerCase() === categoryFilter.toLowerCase());
 
     if (filteredProducts.length === 0) {
-        emptyProductsDiv.style.display = "flex"; // Use flex as per its CSS
+        emptyProductsDiv.style.display = "flex";
         productGrid.style.display = "none";
+        if (categoryFilter !== 'all') {
+            emptyProductsDiv.innerHTML = `<p>No products found in "${categoryFilter}".</p>`;
+        } else {
+            emptyProductsDiv.innerHTML = `<p>No products available at the moment.</p>`;
+        }
     } else {
         emptyProductsDiv.style.display = "none";
-        productGrid.style.display = "grid"; // Assuming it's a grid
+        productGrid.style.display = "grid";
 
         filteredProducts.forEach(product => {
             const productCard = document.createElement('div');
             productCard.className = 'product-card';
-            // Use formatCurrency if available, otherwise fallback to simple formatting
             const displayPrice = typeof formatCurrency === 'function' ? formatCurrency(product.price) : `₱${product.price.toFixed(2)}`;
 
             productCard.innerHTML = `
@@ -95,7 +139,7 @@ function renderProducts(productsToRender, categoryFilter = 'all') {
             productGrid.appendChild(productCard);
         });
     }
-    setupAddToCartButtons(); // Re-attach event listeners to newly created buttons
+    setupAddToCartButtons();
 }
 
 /**
@@ -103,11 +147,10 @@ function renderProducts(productsToRender, categoryFilter = 'all') {
  */
 function setupCategoryTabs() {
     const tabButtons = document.querySelectorAll(".tab-btn");
-    const defaultCategory = "All Products"; // Or derive from the first active tab
+    const defaultCategory = "All Products";
 
     tabButtons.forEach((button) => {
         button.addEventListener("click", () => {
-            // Special case for "Book a Spot"
             if (button.dataset.category && button.dataset.category.toLowerCase() === "book a spot") {
                  window.location.href = "index.html#about";
                  return;
@@ -121,7 +164,6 @@ function setupCategoryTabs() {
         });
     });
 
-    // Ensure "All Products" tab is active by default if it exists
     const allProductsTab = Array.from(tabButtons).find(tab => (tab.dataset.category || "").toLowerCase() === "all products");
     if (allProductsTab && !document.querySelector(".tab-btn.active")) {
         allProductsTab.classList.add("active");
@@ -135,12 +177,11 @@ function setupAddToCartButtons() {
     const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
 
     addToCartButtons.forEach((button) => {
-        // Remove existing listeners to prevent duplicates if called multiple times
         const newButton = button.cloneNode(true);
         button.parentNode.replaceChild(newButton, button);
 
         newButton.addEventListener("click", (event) => {
-            const targetButton = event.currentTarget; // Use currentTarget
+            const targetButton = event.currentTarget;
             const productId = targetButton.dataset.productId;
             const productName = targetButton.dataset.productName;
             const productPrice = parseFloat(targetButton.dataset.productPrice);
@@ -155,15 +196,12 @@ function setupAddToCartButtons() {
                 id: productId,
                 name: productName,
                 price: productPrice,
-                // quantity will be handled by addToCart function in storage.js
             };
 
-            // Assuming addToCart and showAddToCartMessage are global functions
-            // from storage.js and utils.js respectively.
             if (typeof addToCart === 'function' && typeof showAddToCartMessage === 'function') {
-                const success = addToCart(product, 1); // addToCart from storage.js handles quantity
+                const success = addToCart(product, 1);
                 if (success) {
-                    showAddToCartMessage(product, 1); // showAddToCartMessage from utils.js
+                    showAddToCartMessage(product, 1);
                 } else {
                     alert("Failed to add product to cart.");
                 }
@@ -174,9 +212,4 @@ function setupAddToCartButtons() {
         });
     });
 }
-
-// Note: The local placeholder `addToCart` and `showAddToCartMessage` functions that were
-// previously in this file should be removed if `storage.js` and `utils.js` are providing them globally.
-// This script assumes they are available. If `js/utils.js` and `js/storage.js` use ES6 modules,
-// this file (`products.js`) would also need to be a module and use imports.
-// For now, proceeding with assumption of global availability based on current project structure.
+// Note: Assumes formatCurrency, addToCart, showAddToCartMessage are available globally or via imports if converted to module.
