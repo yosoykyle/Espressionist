@@ -1,0 +1,56 @@
+[
+  {
+    "id": "prod101",
+    "name": "Espresso Roast Beans",
+    "price": 650.00,
+    "imageUrl": "https://via.placeholder.com/300x300.png?text=Espresso+Beans",
+    "category": "Coffee & Tea",
+    "stockQuantity": 25,
+    "description": "Dark roast beans, perfect for a rich espresso."
+  },
+  {
+    "id": "prod102",
+    "name": "Green Tea Leaves",
+    "price": 450.00,
+    "imageUrl": "https://via.placeholder.com/300x300.png?text=Green+Tea",
+    "category": "Coffee & Tea",
+    "stockQuantity": 40,
+    "description": "Premium quality green tea leaves."
+  },
+  {
+    "id": "prod201",
+    "name": "Espressionist Mug",
+    "price": 350.00,
+    "imageUrl": "https://via.placeholder.com/300x300.png?text=Espressionist+Mug",
+    "category": "Art & Merch",
+    "stockQuantity": 50,
+    "description": "Signature Espressionist branded mug."
+  },
+  {
+    "id": "prod202",
+    "name": "Coffee Art Print",
+    "price": 800.00,
+    "imageUrl": "https://via.placeholder.com/300x300.png?text=Coffee+Art",
+    "category": "Art & Merch",
+    "stockQuantity": 15,
+    "description": "Framed art print inspired by coffee culture."
+  },
+  {
+    "id": "prod301",
+    "name": "Pour Over Kit",
+    "price": 1200.00,
+    "imageUrl": "https://via.placeholder.com/300x300.png?text=Pour+Over+Kit",
+    "category": "Accessories",
+    "stockQuantity": 20,
+    "description": "Complete kit for the perfect pour over coffee."
+  },
+  {
+    "id": "prod103",
+    "name": "Single Origin Filter Coffee",
+    "price": 720.00,
+    "imageUrl": "https://via.placeholder.com/300x300.png?text=Filter+Coffee",
+    "category": "Coffee & Tea",
+    "stockQuantity": 33,
+    "description": "Medium roast, single origin beans for filter coffee."
+  }
+]

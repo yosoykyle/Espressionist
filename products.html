@@ -24,10 +24,11 @@
     <section class="category-tabs">
         <div class="container">
             <div class="tabs-container">
-                <button class="tab-btn" aria-pressed="false">Coffee & Tea</button>
-                <button class="tab-btn" aria-pressed="false">Art & Merch</button>
-                <button class="tab-btn" aria-pressed="false">Gift Sets</button>
-                <button class="tab-btn" aria-pressed="false">Vouchers</button>
+                <button class="tab-btn active" aria-pressed="true" data-category="All Products">All Products</button>
+                <button class="tab-btn" aria-pressed="false" data-category="Coffee & Tea">Coffee & Tea</button>
+                <button class="tab-btn" aria-pressed="false" data-category="Art & Merch">Art & Merch</button>
+                <button class="tab-btn" aria-pressed="false" data-category="Accessories">Accessories</button>
+                <!-- Updated "Gift Sets" to "Accessories" to match mock data, "Vouchers" removed as no mock data -->
             </div>
         </div>
     </section>
@@ -55,20 +56,7 @@
 
             <!-- Product Grid (hidden by default, would be shown when products are available) -->
             <div class="product-grid" id="product-grid" style="display: none;">
-                <!-- Product Card Template (repeated for demonstration) -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <!-- Placeholder for product image -->
-                        <div class="image-placeholder" aria-label="Product image placeholder"></div>
-                    </div>
-                    <div class="product-details">
-                        <h3 class="product-name">Product Name</h3>
-                        <p class="product-price">₱—</p>
-                        <button class="add-to-cart-btn" aria-label="Add Product Name to cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <!-- More product cards would be added here dynamically -->
+                <!-- Product cards will be dynamically inserted here by js/products.js -->
             </div>
         </div>
     </section>

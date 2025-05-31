@@ -232,6 +232,36 @@ function displayOrderInfo(order) {
   } else {
     noteRow.style.display = "none"
   }
+
+  // Display Itemized List of Products
+  const itemsListContainer = document.getElementById("tracked-items-list");
+  if (itemsListContainer && order.cart && order.cart.length > 0) {
+    itemsListContainer.innerHTML = ''; // Clear previous content
+
+    const ul = document.createElement('ul');
+    ul.className = 'item-list'; // Add a class for potential styling
+
+    order.cart.forEach(item => {
+      const li = document.createElement('li');
+      li.className = 'item-entry'; // Add a class for potential styling
+
+      const itemName = item.name || "Unknown Item";
+      const itemQuantity = item.quantity || 0;
+      const itemPrice = item.price || 0;
+
+      li.innerHTML = `
+        <span class="item-name">${itemName} (x${itemQuantity})</span>
+        <span class="item-price-details">
+            Price per unit: ${formatCurrency(itemPrice)} |
+            Subtotal: ${formatCurrency(itemPrice * itemQuantity)}
+        </span>
+      `;
+      ul.appendChild(li);
+    });
+    itemsListContainer.appendChild(ul);
+  } else if (itemsListContainer) {
+    itemsListContainer.innerHTML = '<p>No items found in this order.</p>';
+  }
 }
 
 /**
