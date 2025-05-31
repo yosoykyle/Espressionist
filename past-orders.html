@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Orders | Espressionist</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/track.css"> <!-- Reusing track.css for now, might need a dedicated CSS file later -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Component loader script -->
+    <script src="js/components.js"></script>
+    <style>
+        /* Additional styles specific to past orders page */
+        .past-orders-section {
+            padding: 40px 0;
+        }
+        .order-list-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .order-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .order-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .order-item-id {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .order-item-date {
+            color: #555;
+            font-size: 0.9rem;
+        }
+        .order-item-details p {
+            margin: 5px 0;
+            color: #333;
+        }
+        .order-item-details .label {
+            font-weight: 500;
+        }
+        .no-orders-message {
+            text-align: center;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+        }
+        .view-details-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+        .view-details-btn:hover {
+            background-color: var(--primary-color-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container" data-component="navbar">
+            <!-- Navbar will be loaded here -->
+        </div>
+    </header>
+
+    <!-- Past Orders Section -->
+    <section class="past-orders-section">
+        <div class="container">
+            <h1 class="page-title">Your Past Orders</h1>
+
+            <div class="order-list-container" id="order-list-container">
+                <!-- Orders will be dynamically inserted here by JavaScript -->
+                <div class="loading-spinner" id="loading-spinner" style="display: none; text-align: center; padding: 20px;">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p>Loading your orders...</p>
+                </div>
+                <div class="no-orders-message" id="no-orders-message" style="display: none;">
+                    <h3>No Past Orders Found</h3>
+                    <p>You haven't placed any orders yet. <a href="products.html">Start shopping now!</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container" data-component="footer">
+            <!-- Footer will be loaded here -->
+        </div>
+    </footer>
+
+    <script src="js/utils.js" type="module"></script> <!-- Assuming utils.js might be needed, also as module if it has exports used by others -->
+    <script src="js/past-orders.js" type="module"></script> <!-- New JS file for this page, as module -->
+</body>
+</html>

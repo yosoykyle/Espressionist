@@ -375,18 +375,82 @@ function handlePlaceOrder() {
   orders.push(order)
 
   // Save orders to localStorage
-  localStorage.setItem("orders", JSON.stringify(orders))
+  // localStorage.setItem("orders", JSON.stringify(orders)) // Will be moved inside fetch .then()
 
   // Clear cart
-  localStorage.removeItem("cart")
+  // localStorage.removeItem("cart") // Will be moved inside fetch .then()
 
-  // Show success message before redirecting
-  showOrderSuccessMessage(trackingCode)
+  // Construct payload for API
+  const payload = {
+    customerName: shippingData.name,
+    customerEmail: "placeholder@example.com", // No separate email field in form, using placeholder
+    shippingAddress: shippingData.address, // Assuming 'address' is the full shipping address
+    items: cartItems.map(item => ({
+      productId: item.id, // Using the existing item.id from cart
+      quantity: item.quantity
+    }))
+  };
 
-  // Redirect to success page with tracking code after a short delay
-  setTimeout(() => {
-    window.location.href = `success.html?order=${trackingCode}`
-  }, 1000)
+  // Show a message or spinner to indicate processing
+  // For now, we'll keep showOrderSuccessMessage before fetch, but this could be improved.
+  // showOrderSuccessMessage(trackingCode); // This shows success too early for an API call
+
+  // Make API call
+  fetch("/api/checkout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+  .then(response => {
+    if (!response.ok) {
+      // If response is not OK, throw an error to be caught by .catch()
+      return response.json().then(errData => {
+        throw new Error(errData.message || `API request failed with status ${response.status}`);
+      });
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("Checkout API success:", data);
+    const finalOrderCode = data.orderCode || trackingCode; // Use API orderCode if available
+
+    // Update order with finalOrderCode if different
+    order.orderId = finalOrderCode;
+
+    // Save order to localStorage (original logic)
+    const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
+    existingOrders.push(order);
+    localStorage.setItem("orders", JSON.stringify(existingOrders));
+
+    // Clear cart (original logic)
+    localStorage.removeItem("cart");
+
+    // Show success message (original logic, potentially using finalOrderCode)
+    showOrderSuccessMessage(finalOrderCode);
+
+    // Redirect to success page (original logic)
+    setTimeout(() => {
+      window.location.href = `success.html?order=${finalOrderCode}`;
+    }, 1000);
+  })
+  .catch(error => {
+    console.error("Checkout API error:", error);
+    // Display a user-friendly error message on the page
+    const errorDisplayElement = document.getElementById("checkout-error-message"); // Assuming an element with this ID exists or will be added
+    if (errorDisplayElement) {
+      errorDisplayElement.textContent = `There was an issue placing your order: ${error.message}. Please try again.`;
+      errorDisplayElement.style.display = "block";
+    } else {
+      // Fallback if the dedicated error element doesn't exist
+      alert(`There was an issue placing your order: ${error.message}. Please try again.`);
+    }
+
+    // Optionally, re-enable the place order button if it was disabled
+    const placeOrderBtn = document.getElementById("place-order-btn");
+    if(placeOrderBtn) placeOrderBtn.disabled = false;
+  });
 }
 
 /**
