@@ -141,32 +141,63 @@ function trackOrder() {
     return
   }
 
-  // Find order in localStorage using the utility function from utils.js
-  const order = findOrder(trackingCode)
+  // Show a loading indicator (optional, but good UX)
+  const trackingInfoElement = document.getElementById("tracking-info");
+  trackingInfoElement.textContent = "Searching for your order...";
+  trackingInfoElement.classList.remove("error", "success");
+  // Consider adding a spinner icon here
 
-  if (order) {
-    // Display order information
-    displayOrderInfo(order)
-    document.getElementById("order-results").style.display = "block"
+  fetch(`/api/orders/${trackingCode}`)
+    .then(response => {
+      if (!response.ok) {
+        // If response is not OK, prepare to throw an error
+        // Try to parse JSON for a message, otherwise use status text
+        return response.json().catch(() => {
+          // If parsing error message fails, create a generic error
+          throw new Error(`Order not found or server error: ${response.statusText} (Status: ${response.status})`);
+        }).then(errorData => {
+          // Throw an error with the message from API or a default one
+          throw new Error(errorData.message || `Order not found (Status: ${response.status})`);
+        });
+      }
+      return response.json();
+    })
+    .then(orderDataFromApi => {
+      if (orderDataFromApi) {
+        displayOrderInfo(orderDataFromApi);
+        document.getElementById("order-results").style.display = "block";
+        trackingInfoElement.textContent = "Order found! Details are displayed below.";
+        trackingInfoElement.classList.add("success");
+        trackingInfoElement.classList.remove("error");
+        document.getElementById("order-results").scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        // This case might not be reached if API returns 404 for not found, handled by .catch
+        showTrackError("Order details could not be retrieved from the server.");
+        trackingInfoElement.textContent = "Could not retrieve order details.";
+        trackingInfoElement.classList.add("error");
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching order status:", error);
+      showTrackError(error.message || "Could not fetch order details. Please try again later.");
+      trackingInfoElement.textContent = error.message || "Failed to fetch order details.";
+      trackingInfoElement.classList.add("error");
+      trackingInfoElement.classList.remove("success");
 
-    // Add success message
-    const trackingInfoElement = document.getElementById("tracking-info")
-    trackingInfoElement.textContent = "Order found! Details are displayed below."
-    trackingInfoElement.classList.add("success")
-    trackingInfoElement.classList.remove("error")
-
-    // Scroll to results
-    document.getElementById("order-results").scrollIntoView({ behavior: "smooth", block: "start" })
-  } else {
-    // Show error message using the utility function from utils.js
-    showTrackError("We couldn't find an order with that tracking code. Please check and try again.")
-
-    // Update tracking info text
-    const trackingInfoElement = document.getElementById("tracking-info")
-    trackingInfoElement.textContent = "No order found with this tracking code. Please try again."
-    trackingInfoElement.classList.add("error")
-    trackingInfoElement.classList.remove("success")
-  }
+      // Optional: Fallback to localStorage if API fails (as per subtask note)
+      // console.log("Attempting fallback to localStorage...");
+      // const localOrder = findOrder(trackingCode);
+      // if (localOrder) {
+      //   displayOrderInfo(localOrder);
+      //   document.getElementById("order-results").style.display = "block";
+      //   trackingInfoElement.textContent = "Order found in local backup. Displaying local data.";
+      //   trackingInfoElement.classList.add("success");
+      //   trackingInfoElement.classList.remove("error");
+      //   showTrackError("Displaying local data as server is unavailable."); // Inform user
+      // } else {
+      //   showTrackError(error.message + " (And not found in local backup)");
+      // }
+    });
 }
 
 /**
