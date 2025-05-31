@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin: User Management | Espressionist</title>
+    <link rel="stylesheet" href="css/admin-styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="products.html">Product Management</a></li>
+            <li><a href="orders.html">Order Management</a></li>
+            <li><a href="users.html">User Management</a></li>
+            <li><a href="#" id="logout-link-user">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>User Management</h1>
+
+        <div id="user-list-container">
+            <h2>Admin User List</h2>
+            <p id="user-list-feedback">Loading users...</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table-body">
+                    <!-- Example Row -->
+                    <tr><td colspan="5">No users loaded yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr style="margin: 30px 0;">
+
+        <div id="user-form-container">
+            <h2 id="user-form-title">Add New Admin User</h2>
+            <form id="user-form">
+                <input type="hidden" id="userId" name="id">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="name">Name (Optional)</label>
+                    <input type="text" id="name" name="name">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password">
+                    <small>Required for new users. Leave blank to keep current password when editing.</small>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword">
+                </div>
+                <button type="submit" class="btn-admin">Save User</button>
+                <button type="button" id="clear-user-form-btn" class="btn-admin" style="background-color: #777;">Clear Form</button>
+            </form>
+            <div id="user-form-feedback" class="error-message" style="display: none; margin-top:10px;"></div>
+        </div>
+    </div>
+    <script src="js/users-admin.js"></script>
+    <script>
+       // Basic logout link functionality for stub pages
+       const logoutLinkUser = document.getElementById('logout-link-user');
+       if(logoutLinkUser) {
+           logoutLinkUser.addEventListener('click', (e) => {
+               e.preventDefault();
+               alert('Mock logout clicked. Redirecting to login.html (stub behavior)');
+               window.location.href = 'login.html';
+           });
+       }
+    </script>
+</body>
+</html>

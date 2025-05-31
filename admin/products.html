@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin: Product Management | Espressionist</title>
+    <link rel="stylesheet" href="css/admin-styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="products.html">Product Management</a></li>
+            <li><a href="orders.html">Order Management</a></li>
+            <li><a href="users.html">User Management</a></li>
+            <li><a href="#" id="logout-link-product">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Product Management</h1>
+
+        <div id="product-list-container">
+            <h2>Product List</h2>
+            <p id="product-list-feedback">Loading products...</p>
+            <!-- Products will be conceptually listed here or a summary shown -->
+            <table>
+               <thead>
+                   <tr>
+                       <th>ID</th>
+                       <th>Name</th>
+                       <th>Price</th>
+                       <th>Quantity</th>
+                       <th>Category</th>
+                       <th>Actions</th>
+                   </tr>
+               </thead>
+               <tbody id="product-table-body">
+                   <!-- Example row (to be replaced by JS or just kept as placeholder) -->
+                   <tr>
+                       <td colspan="6">No products loaded yet.</td>
+                   </tr>
+               </tbody>
+            </table>
+        </div>
+
+        <hr style="margin: 30px 0;">
+
+        <div id="product-form-container">
+            <h2 id="product-form-title">Add New Product</h2>
+            <form id="product-form">
+                <input type="hidden" id="productId" name="id">
+                <div class="form-group">
+                    <label for="name">Product Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <input type="number" id="price" name="price" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" name="quantity" step="1" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <input type="text" id="category" name="category" required>
+                </div>
+                <div class="form-group">
+                    <label for="imageUrl">Image URL</label>
+                    <input type="text" id="imageUrl" name="imageUrl">
+                    <small>For stub purposes, using URL. Actual might be file upload.</small>
+                </div>
+                 <div class="form-group">
+                   <label for="description">Description</label>
+                   <textarea id="description" name="description" rows="3"></textarea>
+               </div>
+                <button type="submit" class="btn-admin">Save Product</button>
+                <button type="button" id="clear-form-btn" class="btn-admin" style="background-color: #777;">Clear Form</button>
+            </form>
+            <div id="product-form-feedback" class="error-message" style="display: none; margin-top:10px;"></div>
+        </div>
+    </div>
+    <script src="js/products-admin.js"></script>
+    <script>
+       // Basic logout link functionality for stub pages that might not have a shared admin layout JS
+       const logoutLinkProd = document.getElementById('logout-link-product');
+       if(logoutLinkProd) {
+           logoutLinkProd.addEventListener('click', (e) => {
+               e.preventDefault();
+               // In a real app, this would call the dashboard.js logout or a shared auth utility
+               alert('Mock logout clicked. Redirecting to login.html (stub behavior)');
+               window.location.href = 'login.html';
+           });
+       }
+    </script>
+</body>
+</html>

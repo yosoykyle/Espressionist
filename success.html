@@ -33,6 +33,7 @@
                     <div class="tracking-info">
                         <h2>Your Tracking Code</h2>
                         <div class="tracking-code" id="tracking-code"></div>
+                        <p class="save-code-message" style="text-align: center; margin-top: 10px; font-weight: bold;">Please save this code to track your order.</p>
                     </div>
                     
                     <div class="order-summary">
@@ -41,16 +42,27 @@
                             <span class="value" id="total-amount"></span>
                         </div>
                         <div class="summary-item">
-                            <span class="label">Items:</span>
-                            <span class="value" id="total-items"></span>
-                        </div>
-                        <div class="summary-item">
                             <span class="label">Order Date:</span>
                             <span class="value" id="order-date"></span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Estimated Delivery:</span>
                             <span class="value">3–5 days within PH</span>
+                        </div>
+                    </div>
+
+                    <div class="shipping-summary"> <!-- New section for shipping -->
+                        <h3>Shipping To:</h3>
+                        <p><strong id="shipping-name-display"></strong></p>
+                        <p id="shipping-address-display"></p>
+                        <p>Phone: <span id="shipping-phone-display"></span></p>
+                        <p>Email: <span id="shipping-email-display">N/A</span></p>
+                    </div>
+
+                    <div class="ordered-items-summary"> <!-- New section for itemized list -->
+                        <h3>Items Ordered:</h3>
+                        <div id="ordered-items-list" class="item-list-container">
+                            <!-- JS will populate this -->
                         </div>
                     </div>
                 </div>

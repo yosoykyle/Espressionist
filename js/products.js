@@ -1,144 +1,215 @@
 // Products page functionality for Espressionist e-commerce site
 
-// Declare addToCart (assuming it's defined elsewhere or imported)
-// For demonstration purposes, we'll define a placeholder.
-// In a real application, you would either import it or have it defined in a shared scope.
-const addToCart = (product, quantity) => {
-  console.warn("addToCart function not fully implemented. Returning true for demonstration.")
-  return true // Placeholder implementation
+let allFetchedProducts = []; // To store all products fetched from JSON or API
+
+document.addEventListener("DOMContentLoaded", () => {
+    setupCategoryTabs();
+    fetchProducts(); // Initial fetch and render of all products
+});
+
+/**
+ * Fetches products first from /api/products, then falls back to local mock JSON.
+ */
+async function fetchProducts() {
+    const productGrid = document.getElementById("product-grid");
+    const emptyProductsDiv = document.getElementById("empty-products");
+    const loadingIndicator = document.getElementById("products-loading");
+    const loadingText = loadingIndicator ? loadingIndicator.querySelector('.loading-text') : null;
+
+    function showLoading(message) {
+        if (loadingIndicator) loadingIndicator.style.display = "flex";
+        if (loadingText) loadingText.textContent = message || "Loading products...";
+        if (productGrid) productGrid.style.display = "none";
+        if (emptyProductsDiv) emptyProductsDiv.style.display = "none";
+    }
+
+    function hideLoading() {
+        if (loadingIndicator) loadingIndicator.style.display = "none";
+    }
+
+    function showError(message) {
+        if (emptyProductsDiv) {
+            emptyProductsDiv.innerHTML = `<p>${message}</p>`;
+            emptyProductsDiv.style.display = "flex";
+        }
+        if (productGrid) productGrid.style.display = "none";
+        hideLoading();
+    }
+
+    showLoading("Attempting to fetch products from API...");
+
+    try {
+        const response = await fetch('/api/products');
+        if (!response.ok) {
+            // Not a network error, but an HTTP error (4xx, 5xx)
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+        const dataFromApi = await response.json();
+        if (!Array.isArray(dataFromApi)) {
+            // Valid JSON, but not an array as expected
+            throw new Error("API did not return a valid product list.");
+        }
+        allFetchedProducts = dataFromApi;
+        console.log("Successfully fetched products from /api/products");
+        renderProducts(allFetchedProducts);
+        hideLoading();
+    } catch (error) {
+        console.warn("API call to /api/products failed:", error.message);
+        showLoading("API failed. Attempting to load from local backup...");
+
+        try {
+            const fallbackResponse = await fetch('data/mock-products.json');
+            if (!fallbackResponse.ok) {
+                throw new Error(`HTTP error! status: ${fallbackResponse.status} while fetching local JSON.`);
+            }
+            allFetchedProducts = await fallbackResponse.json();
+            if (!Array.isArray(allFetchedProducts)) {
+                 throw new Error("Local mock data is not a valid product list.");
+            }
+            console.log("Successfully fetched products from local data/mock-products.json");
+            renderProducts(allFetchedProducts);
+            // Optionally, inform user that fallback data is shown
+            if (loadingText) loadingText.textContent = "Displaying products from local backup.";
+            // Keep loading indicator for a bit or remove immediately
+             setTimeout(hideLoading, 500); // Hide after a short delay to show message
+        } catch (fallbackError) {
+            console.error("Error fetching products from local backup:", fallbackError.message);
+            showError("Could not load products from API or local backup. Please try again later.");
+        }
+    }
 }
 
-// Wait for DOM to be fully loaded
-document.addEventListener("DOMContentLoaded", () => {
-  // Set up category tabs
-  setupCategoryTabs()
+/**
+ * Renders products in the grid, optionally filtering by category.
+ * @param {Array<Object>} productsToRender - The array of product objects to render.
+ * @param {string} categoryFilter - The category to filter by (e.g., "Coffee & Tea"). Defaults to 'all'.
+ */
+function renderProducts(productsToRender, categoryFilter = 'all') {
+    const productGrid = document.getElementById("product-grid");
+    const emptyProductsDiv = document.getElementById("empty-products");
 
-  // Add event listeners to Add to Cart buttons
-  setupAddToCartButtons()
-})
+    if (!productGrid || !emptyProductsDiv) {
+        console.error("Required DOM elements (product-grid or empty-products) not found.");
+        return;
+    }
+
+    productGrid.innerHTML = ''; // Clear existing products
+
+    const filteredProducts = categoryFilter === 'all'
+        ? productsToRender
+        : productsToRender.filter(product => product.category && product.category.toLowerCase() === categoryFilter.toLowerCase());
+
+    if (filteredProducts.length === 0) {
+        emptyProductsDiv.style.display = "flex";
+        productGrid.style.display = "none";
+        if (categoryFilter !== 'all') {
+            emptyProductsDiv.innerHTML = `<p>No products found in "${categoryFilter}".</p>`;
+        } else {
+            emptyProductsDiv.innerHTML = `<p>No products available at the moment.</p>`;
+        }
+    } else {
+        emptyProductsDiv.style.display = "none";
+        productGrid.style.display = "grid";
+
+        filteredProducts.forEach(product => {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            const displayPrice = typeof formatCurrency === 'function' ? formatCurrency(product.price) : `₱${product.price.toFixed(2)}`;
+
+            productCard.innerHTML = `
+                <div class="product-image-container">
+                    <img src="${product.imageUrl}" alt="${product.name}" class="product-image">
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">${product.name}</h3>
+                    <p class="product-price">${displayPrice}</p>
+                    <p class="product-stock">Stock: ${product.stockQuantity}</p>
+                    ${product.description ? `<p class="product-description">${product.description}</p>` : ''}
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart-btn"
+                            data-product-id="${product.id}"
+                            data-product-name="${product.name}"
+                            data-product-price="${product.price}"
+                            aria-label="Add ${product.name} to cart">
+                        Add to Cart
+                    </button>
+                </div>
+            `;
+            productGrid.appendChild(productCard);
+        });
+    }
+    setupAddToCartButtons();
+}
 
 /**
  * Set up category tabs functionality
  */
 function setupCategoryTabs() {
-  const tabButtons = document.querySelectorAll(".tab-btn")
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    const defaultCategory = "All Products";
 
-  tabButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      // Check if this is the Book a Spot button
-      if (button.textContent.trim() === "Book a Spot") {
-        // Navigate to the about section on index.html
-        window.location.href = "index.html#about"
-        return
-      }
+    tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            if (button.dataset.category && button.dataset.category.toLowerCase() === "book a spot") {
+                 window.location.href = "index.html#about";
+                 return;
+            }
 
-      // Remove active class from all tabs
-      tabButtons.forEach((tab) => tab.classList.remove("active"))
+            tabButtons.forEach((tab) => tab.classList.remove("active"));
+            button.classList.add("active");
 
-      // Add active class to clicked tab
-      button.classList.add("active")
+            const selectedCategory = button.dataset.category || defaultCategory;
+            renderProducts(allFetchedProducts, selectedCategory === "All Products" ? "all" : selectedCategory);
+        });
+    });
 
-      // In a real implementation, this would filter products by category
-      // For now, we just show the empty state since we don't have product data
-    })
-  })
+    const allProductsTab = Array.from(tabButtons).find(tab => (tab.dataset.category || "").toLowerCase() === "all products");
+    if (allProductsTab && !document.querySelector(".tab-btn.active")) {
+        allProductsTab.classList.add("active");
+    }
 }
 
 /**
- * Set up Add to Cart buttons
+ * Set up Add to Cart buttons for dynamically generated product cards.
  */
 function setupAddToCartButtons() {
-  const addToCartButtons = document.querySelectorAll(".add-to-cart-btn")
+    const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
 
-  addToCartButtons.forEach((button) => {
-    button.addEventListener("click", (event) => {
-      // Get the product card
-      const productCard = event.target.closest(".product-card")
+    addToCartButtons.forEach((button) => {
+        const newButton = button.cloneNode(true);
+        button.parentNode.replaceChild(newButton, button);
 
-      if (productCard) {
-        // Get product details
-        const productName = productCard.querySelector(".product-name").textContent
-        const productPrice =
-          Number.parseFloat(productCard.querySelector(".product-price").textContent.replace("₱", "")) || 0
+        newButton.addEventListener("click", (event) => {
+            const targetButton = event.currentTarget;
+            const productId = targetButton.dataset.productId;
+            const productName = targetButton.dataset.productName;
+            const productPrice = parseFloat(targetButton.dataset.productPrice);
 
-        // Generate a unique ID for the product (in a real app, this would come from the database)
-        const productId = `product-${Date.now()}`
+            if (!productId || !productName || isNaN(productPrice)) {
+                console.error("Product data missing from button:", targetButton.dataset);
+                alert("Could not add product to cart, data is missing.");
+                return;
+            }
 
-        // Create product object
-        const product = {
-          id: productId,
-          name: productName,
-          price: productPrice,
-        }
+            const product = {
+                id: productId,
+                name: productName,
+                price: productPrice,
+            };
 
-        // Add to cart using global addToCart function from storage.js
-        const success = addToCart(product, 1)
-
-        if (success) {
-          // Show success message using the utility function from utils.js
-          showAddToCartMessage(product, 1)
-        }
-      }
-    })
-  })
+            if (typeof addToCart === 'function' && typeof showAddToCartMessage === 'function') {
+                const success = addToCart(product, 1);
+                if (success) {
+                    showAddToCartMessage(product, 1);
+                } else {
+                    alert("Failed to add product to cart.");
+                }
+            } else {
+                console.error("addToCart or showAddToCartMessage function is not available globally.");
+                alert("Error: Cart functionality is currently unavailable.");
+            }
+        });
+    });
 }
-
-/**
- * Show a message when product is added to cart
- */
-function showAddToCartMessage(product, quantity) {
-  // Check if a message already exists
-  let messageElement = document.querySelector(".add-to-cart-message")
-
-  if (!messageElement) {
-    // Create message element if it doesn't exist
-    messageElement = document.createElement("div")
-    messageElement.className = "add-to-cart-message"
-
-    // Use innerHTML only once for better performance
-    messageElement.innerHTML = `
-      <i class="fas fa-check-circle"></i>
-      Product added to cart!
-      <a href="cart.html">View Cart</a>
-    `
-
-    // Add styles
-    Object.assign(messageElement.style, {
-      position: "fixed",
-      top: "20px",
-      right: "20px",
-      backgroundColor: "#4caf50",
-      color: "white",
-      padding: "15px 20px",
-      borderRadius: "5px",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
-      zIndex: "1000",
-      display: "flex",
-      alignItems: "center",
-      gap: "10px",
-    })
-
-    // Style the link
-    const link = messageElement.querySelector("a")
-    Object.assign(link.style, {
-      color: "white",
-      fontWeight: "bold",
-      marginLeft: "10px",
-      textDecoration: "underline",
-    })
-
-    // Add to body
-    document.body.appendChild(messageElement)
-
-    // Remove after 3 seconds
-    setTimeout(() => {
-      messageElement.style.opacity = "0"
-      messageElement.style.transition = "opacity 0.5s ease"
-      setTimeout(() => {
-        if (messageElement.parentNode) {
-          messageElement.parentNode.removeChild(messageElement)
-        }
-      }, 500)
-    }, 3000)
-  }
-}
+// Note: Assumes formatCurrency, addToCart, showAddToCartMessage are available globally or via imports if converted to module.
